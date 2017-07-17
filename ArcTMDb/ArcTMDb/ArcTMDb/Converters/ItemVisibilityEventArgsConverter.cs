@@ -10,7 +10,7 @@ namespace ArcTMDb.Converters
         {
             var itemVisibilityEventArgs = value as ItemVisibilityEventArgs;
             if (itemVisibilityEventArgs == null)
-                throw new ArgumentException("Expected value to be of type ItemTappedEventArgs", nameof(value)); //Mudar mensagem
+                throw new ArgumentException("Expected value to be of type ItemVisibilityEventArgs", nameof(value)); 
 
             return itemVisibilityEventArgs.Item;
         }

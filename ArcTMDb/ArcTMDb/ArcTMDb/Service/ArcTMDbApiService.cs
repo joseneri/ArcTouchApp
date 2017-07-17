@@ -19,9 +19,10 @@ namespace ArcTMDb.Service
 
             httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
+            var url = $"{Constants.BaseUrl}/movie/upcoming?{Constants.ApiKey}&page={page}";
+
             try
             {
-                var url = $"{Constants.BaseUrl}/movie/upcoming?{Constants.ApiKey}&page={page}";
                 var response = await httpClient.GetAsync(new Uri(url)).ConfigureAwait(false);
 
                 if (response.IsSuccessStatusCode)
@@ -42,7 +43,7 @@ namespace ArcTMDb.Service
 
             return null;
         }
-        //TODO try catch
+
         public async Task<MovieResults> GetMoviesByTitleAsync(string title, int page = 1)
         {
             var httpClient = new HttpClient(new NativeMessageHandler());
@@ -51,21 +52,29 @@ namespace ArcTMDb.Service
 
             var url = $"{Constants.BaseUrl}/search/movie?{Constants.ApiKey}&query={title}&page={page}";
 
-            var response = await httpClient.GetAsync(new Uri(url)).ConfigureAwait(false);
-
-            if (response.IsSuccessStatusCode)
+            try
             {
-                using (var responseStream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false))
+                var response = await httpClient.GetAsync(new Uri(url)).ConfigureAwait(false);
+
+                if (response.IsSuccessStatusCode)
                 {
-                    return JsonConvert.DeserializeObject<MovieResults>(
-                        await new StreamReader(responseStream)
-                            .ReadToEndAsync().ConfigureAwait(false));
+                    using (var responseStream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false))
+                    {
+                        return JsonConvert.DeserializeObject<MovieResults>(
+                            await new StreamReader(responseStream)
+                                .ReadToEndAsync().ConfigureAwait(false));
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+                throw;
             }
 
             return null;
         }
-        //TODO try catch
+
         public async Task<GenreResults> GetGenres()
         {
             var httpClient = new HttpClient(new NativeMessageHandler());
@@ -74,17 +83,25 @@ namespace ArcTMDb.Service
 
             var url = ($"{Constants.BaseUrl}/genre/movie/list?{Constants.ApiKey}");
 
-            var response = await httpClient.GetAsync(new Uri(url)).ConfigureAwait(false);
-
-            if (response.IsSuccessStatusCode)
+            try
             {
-                var result = response.Content;
-                using (var responseStream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false))
+                var response = await httpClient.GetAsync(new Uri(url)).ConfigureAwait(false);
+
+                if (response.IsSuccessStatusCode)
                 {
-                    return JsonConvert.DeserializeObject<GenreResults>(
-                        await new StreamReader(responseStream)
-                            .ReadToEndAsync().ConfigureAwait(false));
+                    var result = response.Content;
+                    using (var responseStream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false))
+                    {
+                        return JsonConvert.DeserializeObject<GenreResults>(
+                            await new StreamReader(responseStream)
+                                .ReadToEndAsync().ConfigureAwait(false));
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+                throw;
             }
 
             return null;

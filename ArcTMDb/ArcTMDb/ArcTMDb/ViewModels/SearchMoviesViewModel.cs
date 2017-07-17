@@ -101,19 +101,19 @@ namespace ArcTMDb.ViewModels
 
         private string GetGenreNames(int[] genresId)
         {
-            string genresName = string.Empty;
+            string genreNames = string.Empty;
             string split = " | ";
 
             if (genresId.Count() == 0 || _genresResults == null)
-                return genresName;
+                return genreNames;
 
             foreach (var genre in _genresResults.Genres)
             {
                 if (genresId.Contains(genre.Id))
-                    genresName += genre.Name + split;
+                    genreNames += genre.Name + split;
             }
 
-            return genresName.Remove(genresName.Length - split.Length);
+            return genreNames.Remove(genreNames.Length - split.Length);
         }
     }
 }

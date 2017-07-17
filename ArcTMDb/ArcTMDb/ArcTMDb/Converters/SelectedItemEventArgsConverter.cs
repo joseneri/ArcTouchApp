@@ -10,7 +10,7 @@ namespace ArcTMDb.Converters
         {
             var SelectedItemEventArgs = value as SelectedItemChangedEventArgs;
             if (SelectedItemEventArgs == null)
-                throw new ArgumentException("Expected value to be of type ItemTappedEventArgs", nameof(value)); //Mudar mensagem
+                throw new ArgumentException("Expected value to be of type SelectedItemEventArgs", nameof(value)); 
 
             return SelectedItemEventArgs.SelectedItem;
         }
