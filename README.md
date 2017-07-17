@@ -23,5 +23,4 @@ Json.NET is a popular high-performance JSON framework for .NET. It is used for S
 * ### Xamarin.Forms
 
 Build native UIs for iOS, Android and Windows from a single, shared C# codebase.
-Use the Xamarin.Forms API to quickly build native apps for iOS, Android and Windows completely in C#.ild native apps for iOS, Android and Windows completely in C#.
-d native apps for iOS, Android and Windows completely in C#.
+Use the Xamarin.Forms API to quickly build native apps for iOS, Android and Windows completely in C#.
