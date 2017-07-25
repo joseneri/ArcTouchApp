@@ -9,6 +9,6 @@ namespace ArcTMDb.Service
 
         Task<MovieResults> GetMoviesByTitleAsync(string title, int page = 1);
 
-        Task<GenreResults> GetGenres();
+        Task<GenreResults> GetGenresAsync();
     }
 }

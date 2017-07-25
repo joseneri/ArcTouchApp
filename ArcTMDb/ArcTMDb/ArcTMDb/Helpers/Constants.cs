@@ -1,4 +1,4 @@
-﻿namespace ArcTMDb.Helper
+﻿namespace ArcTMDb.Helpers
 {
     public class Constants
     {

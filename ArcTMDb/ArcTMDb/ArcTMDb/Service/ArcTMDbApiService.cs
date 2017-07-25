@@ -1,5 +1,5 @@
 ﻿using ArcTMDb.Models;
-using ArcTMDb.Helper;
+using ArcTMDb.Helpers;
 using ModernHttpClient;
 using Newtonsoft.Json;
 using System;
@@ -75,7 +75,7 @@ namespace ArcTMDb.Service
             return null;
         }
 
-        public async Task<GenreResults> GetGenres()
+        public async Task<GenreResults> GetGenresAsync()
         {
             var httpClient = new HttpClient(new NativeMessageHandler());
 

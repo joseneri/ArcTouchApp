@@ -1,26 +1,34 @@
-﻿using ArcTMDb.Helper;
+﻿using ArcTMDb.Helpers;
+using Newtonsoft.Json;
 
 namespace ArcTMDb.Models
 {
     public class MovieDetails
     {
-        public string Poster_path { get; set; }
-        public bool Adult { get; set; }
+        [JsonProperty("poster_path")]
+        public string PosterPath { get; set; }
+
         public string Overview { get; set; }
-        public string Release_date { get; set; }
-        public int[] Genre_ids { get; set; }
+
+        [JsonProperty("release_date")]
+        public string ReleaseDate { get; set; }
+
+        [JsonProperty("genre_ids")]
+        public int[] GenreIds { get; set; }
+
         public int Id { get; set; }
-        public string Original_title { get; set; }
-        public string Original_language { get; set; }
+
         public string Title { get; set; }
-        public string Backdrop_path { get; set; }
-        public float Popularity { get; set; }
-        public int Vote_count { get; set; }
-        public bool Video { get; set; }
-        public float Vote_average { get; set; }
+
+        [JsonProperty("backdrop_path")]
+        public string BackdropPath { get; set; }
+        
         public string GenreNames { get; set; }
-        public string Details => string.Format("{0}  {1}", Release_date, GenreNames);
-        public string FullImagePath => string.Format("{0}{1}", Constants.ImageBaseURLW342, Poster_path);
-        public string FullSmallImagePath => string.Format("{0}{1}", Constants.ImageBaseURLW154, Poster_path);
+
+        public string Details => string.Format("{0}  {1}", ReleaseDate, GenreNames);
+
+        public string FullImagePath => string.Format("{0}{1}", Constants.ImageBaseURLW342, PosterPath);
+
+        public string FullSmallImagePath => string.Format("{0}{1}", Constants.ImageBaseURLW154, PosterPath);
     }
 }

@@ -1,7 +1,10 @@
-﻿using ArcTMDb.Models;
+﻿using ArcTMDb.Helpers;
+using ArcTMDb.Models;
 using ArcTMDb.Service;
+using System;
 using System.Collections.ObjectModel;
-using System.Linq;
+using System.Diagnostics;
+using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace ArcTMDb.ViewModels
@@ -10,9 +13,9 @@ namespace ArcTMDb.ViewModels
     {
         private readonly IArcTMDbApiService _arcTMDbApiService;
        
-        private GenreResults _genresResults;
+        private GenreResults _genreResults;
 
-        private int page = 0;
+        private int _page = 0;
 
         private string _searchTerm;
         public string SearchTerm
@@ -25,11 +28,11 @@ namespace ArcTMDb.ViewModels
             }
         }
 
-        public ObservableCollection<MovieDetails> SearchMovies { get; set; }
+        public ObservableCollection<MovieDetails> SearchMovies { get; } 
 
         public Command SearchCommand { get; }
 
-        public Command<MovieDetails> LoadMoreMoviesCommand { get; set; }
+        public Command<MovieDetails> LoadMoreMoviesCommand { get; }
 
         public Command<MovieDetails> ShowMovieDetailsCommand { get; }
 
@@ -37,83 +40,86 @@ namespace ArcTMDb.ViewModels
         {
             _arcTMDbApiService = arcTMDbApiService;
 
-            GetGenres();
-
             SearchMovies = new ObservableCollection<MovieDetails>();
+            
+            SearchCommand = new Command(async () => await ExecuteSearchCommand(),  CanExecuteSearchCommand);
 
-            SearchCommand = new Command(ExecuteSearch, CanExecuteSearch);
+            LoadMoreMoviesCommand = new Command<MovieDetails>(async (movieDetails) => await ExecuteLoadMoreMoviesCommand(movieDetails), CanExecuteLoadMoreMoviesCommand);
 
-            LoadMoreMoviesCommand = new Command<MovieDetails>(ExecuteLoadMoreMovies, CanExecuteLoadMoreMovies);
-
-            ShowMovieDetailsCommand = new Command<MovieDetails>(ExecuteShowMovieDetails);
+            ShowMovieDetailsCommand = new Command<MovieDetails>(async (movieDetails) => await  ExecuteShowMovieDetailsCommand(movieDetails));
         }
 
-        void ExecuteSearch()
+        private async Task ExecuteSearchCommand()
         {
-            page = 0;
+            try
+            {
+                _page = 0;
+                SearchMovies.Clear();
 
-            SearchMovies.Clear();
-
-            LoadSearchMovies();
+                await LoadSearchMoviesAsync();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
         }
 
-        bool CanExecuteSearch()
+        private bool CanExecuteSearchCommand()
         {
             return string.IsNullOrWhiteSpace(SearchTerm) == false;
         }
 
-        private void ExecuteLoadMoreMovies(MovieDetails movieDetails)
+        private async Task ExecuteLoadMoreMoviesCommand(MovieDetails movieDetails)
         {
-            LoadSearchMovies();
+            try
+            {
+                await LoadSearchMoviesAsync();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
         }
 
-        private async void LoadSearchMovies()
+        private bool CanExecuteLoadMoreMoviesCommand(MovieDetails movieDetails)
         {
-            var moviesByTitle = await _arcTMDbApiService.GetMoviesByTitleAsync(SearchTerm, ++page);
+            return movieDetails == SearchMovies[SearchMovies.Count - 1];
+        }
 
-            if (moviesByTitle != null)
+        private async Task LoadSearchMoviesAsync()
+        {
+            try
             {
-                foreach (var movieDetails in moviesByTitle.Results)
+                if (_genreResults == null)
+                    _genreResults = await _arcTMDbApiService.GetGenresAsync();
+
+                var moviesByTitle = await _arcTMDbApiService.GetMoviesByTitleAsync(SearchTerm, ++_page);
+
+                if (moviesByTitle != null)
                 {
-                    movieDetails.GenreNames = GetGenreNames(movieDetails.Genre_ids);
-                    SearchMovies.Add(movieDetails);
+                    foreach (var movieDetails in moviesByTitle.Results)
+                    {
+                        movieDetails.GenreNames = GenreUtility.GetGenreNames(movieDetails.GenreIds, _genreResults);
+                        SearchMovies.Add(movieDetails);
+                    }
                 }
             }
-        }
-
-        private bool CanExecuteLoadMoreMovies(MovieDetails movieDetails)
-        {
-            if (movieDetails == SearchMovies[SearchMovies.Count - 1])
-                return true;
-
-            return false;
-        }
-
-        private async void ExecuteShowMovieDetails(MovieDetails movieDetails)
-        {
-            await PushAsync<MovieDetailsViewModel>(_arcTMDbApiService, movieDetails);
-        }
-
-        private async void GetGenres()
-        {
-            _genresResults = await _arcTMDbApiService.GetGenres();
-        }
-
-        private string GetGenreNames(int[] genresId)
-        {
-            string genreNames = string.Empty;
-            string split = " | ";
-
-            if (genresId.Count() == 0 || _genresResults == null)
-                return genreNames;
-
-            foreach (var genre in _genresResults.Genres)
+            catch (Exception ex)
             {
-                if (genresId.Contains(genre.Id))
-                    genreNames += genre.Name + split;
+                Debug.WriteLine(ex.Message);
             }
+        }
 
-            return genreNames.Remove(genreNames.Length - split.Length);
+        private async Task ExecuteShowMovieDetailsCommand(MovieDetails movieDetails)
+        {
+            try
+            {
+                await PushAsync<MovieDetailsViewModel>(_arcTMDbApiService, movieDetails);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
         }
     }
 }

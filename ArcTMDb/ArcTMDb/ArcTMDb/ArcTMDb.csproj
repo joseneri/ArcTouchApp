@@ -42,13 +42,14 @@
     <Compile Include="Behaviors\EventToCommandBehavior.cs" />
     <Compile Include="Converters\ItemVisibilityEventArgsConverter.cs" />
     <Compile Include="Converters\SelectedItemEventArgsConverter.cs" />
+    <Compile Include="Helpers\GenreUtility.cs" />
     <Compile Include="Models\GenreDetails.cs" />
     <Compile Include="Models\GenreResults.cs" />
     <Compile Include="Models\MovieDetails.cs" />
     <Compile Include="Models\MovieResults.cs" />
     <Compile Include="Service\ArcTMDbApiService.cs" />
     <Compile Include="Service\IArcTMDbApiService.cs" />
-    <Compile Include="Helper\Constants.cs" />
+    <Compile Include="Helpers\Constants.cs" />
     <Compile Include="ViewModels\BaseViewModel.cs" />
     <Compile Include="ViewModels\MovieDetailsViewModel.cs" />
     <Compile Include="ViewModels\SearchMoviesViewModel.cs" />
