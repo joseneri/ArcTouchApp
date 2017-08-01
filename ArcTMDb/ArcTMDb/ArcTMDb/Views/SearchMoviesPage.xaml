@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ArcTMDb.Views.SearchMoviesPage"
+             xmlns:b="clr-namespace:ArcTMDb.Behaviors;assembly:ArcTMDb"
+             xmlns:c="clr-namespace:ArcTMDb.Converters;assempbly:ArcTMDb"
+             Title="Search Movies">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <c:SelectedItemEventArgsConverter x:Key="SelectedItemEventArgsConverter" />
+            <c:ItemVisibilityEventArgsConverter x:Key="ItemVisibilityEventArgsConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <StackLayout>
+        <Entry Text="{Binding SearchTerm}" Placeholder="Type a movie title"/>
+        <Button Text="Search" Command="{Binding SearchCommand}" />
+        <ListView ItemsSource="{Binding SearchMovies}">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ImageCell 
+                            Text="{Binding Title}" 
+                            Detail="{Binding Details}" 
+                            ImageSource="{Binding FullSmallImagePath}">
+                    </ImageCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+            <ListView.Behaviors>
+                <b:EventToCommandBehavior EventName="ItemSelected" Command="{Binding ShowMovieDetailsCommand}"
+                                            Converter="{StaticResource SelectedItemEventArgsConverter}" />
+                <b:EventToCommandBehavior EventName="ItemAppearing" Command="{Binding LoadMoreMoviesCommand}"
+                                            Converter="{StaticResource ItemVisibilityEventArgsConverter}" />
+            </ListView.Behaviors>
+        </ListView>
+    </StackLayout>
+</ContentPage>

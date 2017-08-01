@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:ArcTMDb"
+             x:Class="ArcTMDb.Views.UpComingMoviesPage"
+             xmlns:b="clr-namespace:ArcTMDb.Behaviors;assembly:ArcTMDb"
+             xmlns:c="clr-namespace:ArcTMDb.Converters;assempbly:ArcTMDb"
+             Title="UpComing Movies">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <c:SelectedItemEventArgsConverter x:Key="SelectedItemEventArgsConverter" />
+            <c:ItemVisibilityEventArgsConverter x:Key="ItemVisibilityEventArgsConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Icon="ic_search_white_36dp.png"  Command="{Binding ShowSearchMovieCommand}"/>
+    </ContentPage.ToolbarItems>
+
+    <StackLayout>
+        <ListView ItemsSource="{Binding UpComingMovies}">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ImageCell 
+                            Text="{Binding Title}" 
+                            Detail="{Binding Details}" 
+                            ImageSource="{Binding FullSmallImagePath}">
+                    </ImageCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+            <ListView.Behaviors>
+                <b:EventToCommandBehavior EventName="ItemSelected" Command="{Binding ShowMovieDetailsCommand}" 
+                                            Converter="{StaticResource SelectedItemEventArgsConverter}" />
+                <b:EventToCommandBehavior EventName="ItemAppearing" Command="{Binding LoadMoreMoviesCommand}"
+                                            Converter="{StaticResource ItemVisibilityEventArgsConverter}" />
+            </ListView.Behaviors>
+        </ListView>
+    </StackLayout>
+
+</ContentPage>
