@@ -1,4 +1,4 @@
-## Mobile Dev Code Challenge for ArcTouch
+## Mobile Dev Code Challenge
 An app for cinephiles and movie hobbyists.  This app show the list of upcoming movies and 
 search for movies by entering a partial or full movie name.
 
